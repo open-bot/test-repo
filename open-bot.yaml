@@ -63,3 +63,34 @@ rules:
     label:
       remove: issue-template-missing
     reopen: true
+- filters:
+    threshold:
+      maximum: 1
+      filters:
+        label_1: "Category: A"
+        label_2: "Category: B"
+        label_3: "Category: C"
+  actions:
+    label: "Category: (missing)"
+- filters:
+    threshold:
+      minimum: 3
+      filters:
+        label_1: "Category: A"
+        label_2: "Category: B"
+        label_3: "Category: C"
+  actions:
+    label: "Category: (conflict)"
+- filters:
+    threshold:
+      minimum: 2
+      maximum: 2
+      filters:
+        label_1: "Category: A"
+        label_2: "Category: B"
+        label_3: "Category: C"
+  actions:
+    label:
+      remove:
+      - "Category: (missing)"
+      - "Category: (conflict)"
