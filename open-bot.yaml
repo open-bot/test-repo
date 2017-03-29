@@ -1,0 +1,7 @@
+bot: webpack-bot
+rules:
+- filters:
+    open: true
+    comment: (hi|hello)
+  actions:
+    comment: Hi
