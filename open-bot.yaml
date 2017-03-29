@@ -5,3 +5,13 @@ rules:
     comment: (hi|hello)
   actions:
     comment: Hi
+- filters:
+    open: true
+    comment: @webpack-bot close it
+  actions:
+    close: true
+- filters:
+    open: false
+    comment: @webpack-bot reopen it
+  actions:
+    reopen: true
