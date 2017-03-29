@@ -10,6 +10,12 @@ rules:
   actions:
     label: "mentioned-sokra"
 - filters:
+    comment:
+      author: "^sokra$"
+  actions:
+    label:
+      remove: "mentioned-sokra"
+- filters:
     open: true
     comment: "@webpack-bot close it"
   actions:
