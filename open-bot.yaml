@@ -136,6 +136,7 @@ rules:
       cc @{{review.user.login}}
 - filters:
     open: true
+    commit: true
     not:
       review: true
   actions:
