@@ -15,3 +15,41 @@ rules:
     comment: "@webpack-bot reopen it"
   actions:
     reopen: true
+- filters:
+    issue: true
+    open: true
+    threshold:
+      maximum: 3
+      filters:
+        issue_1: feature.*bug
+        issue_2: current behavior
+        issue_3: reproduce
+        issue_4: expected behavior
+        issue_5: motivation
+        issue_6: version
+  actions:
+    label: issue-template-missing
+    comment: |-
+      It looks like you just deleted our lovely crafted [issue template](https://raw.githubusercontent.com/webpack/webpack/master/.github/ISSUE_TEMPLATE.md). It was there for good reasons. Please help us solving your issue by answering the questions asked in this template. I'm closing this. Please edit the issue with filled issue template. Also make sure your issue is not a question. Questions should be posted on Stack Overflow.
+      
+      I'll reopen the issue automatically when issue template is followed.
+    close: true
+- filters:
+    issue: true
+    open: false
+    label: issue-template-missing
+    threshold:
+      minimum: 4
+      filters:
+        issue_1: feature.*bug
+        issue_2: current behavior
+        issue_3: reproduce
+        issue_4: expected behavior
+        issue_5: motivation
+        issue_6: version
+  actions:
+    comment: |-
+      Thanks for your help. The issue template is now followed and I reopen the issue.
+    label:
+      remove: issue-template-missing
+    reopen: true
