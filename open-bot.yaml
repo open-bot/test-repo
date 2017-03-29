@@ -94,3 +94,66 @@ rules:
       remove:
       - "Category: (missing)"
       - "Category: (conflict)"
+- filters:
+    open: true
+    in_order:
+      commit: true
+      review:
+        state: "approved"
+  actions:
+    label:
+      add: reviewed-approved
+      remove:
+      - review-outdated
+      - unreviewed
+- filters:
+    open: true
+    in_order:
+      commit: true
+      review:
+        state: "changes"
+  actions:
+    label:
+      add: reviewed-changes-requested
+      remove:
+      - review-outdated
+      - unreviewed
+- filters:
+    open: true
+    in_order:
+      review: true
+      commit: true
+  actions:
+    label:
+      add: review-outdated
+      remove:
+      - reviewed-changes-requested
+      - reviewed-approved
+      - unreviewed
+    comment: |-
+      Thanks for your changes. We'll review it again.
+      
+      cc @{{review.user.login}}
+- filters:
+    open: true
+    not:
+      review: true
+  actions:
+    label: unreviewed
+- filters:
+    open: true
+    status:
+      context: "continuous-integration/travis-ci/pr"
+      state: "success"
+  actions:
+    label: ci-ok
+- filters:
+    open: true
+    status:
+      context: "continuous-integration/travis-ci/pr"
+      state: "failure"
+  actions:
+    label:
+      remove: ci-ok
+    comment: |-
+      The CI failed. Please take a look at the [{{status.target_url}}](CI results).
