@@ -6,6 +6,10 @@ rules:
   actions:
     comment: Hi
 - filters:
+    comment: "@sokra"
+  actions:
+    label: "mentioned-sokra"
+- filters:
     open: true
     comment: "@webpack-bot close it"
   actions:
