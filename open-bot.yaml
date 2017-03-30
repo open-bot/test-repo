@@ -152,6 +152,7 @@ rules:
       state: "success"
   actions:
     label: ci-ok
+    comment: The important CI build succeeded. Great work so far.
 - filters:
     open: true
     status:
