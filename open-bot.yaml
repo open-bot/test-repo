@@ -71,7 +71,9 @@ rules:
         label_2: "Category: B"
         label_3: "Category: C"
   actions:
-    label: "Category: (missing)"
+    label: 
+      add: "Category: (missing)"
+      remove: "Category: (conflict)"
 - filters:
     threshold:
       minimum: 2
@@ -80,7 +82,9 @@ rules:
         label_2: "Category: B"
         label_3: "Category: C"
   actions:
-    label: "Category: (conflict)"
+    label:
+      add: "Category: (conflict)"
+      remove: "Category: (missing)"
 - filters:
     threshold:
       minimum: 1
