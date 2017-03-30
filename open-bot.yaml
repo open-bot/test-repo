@@ -162,4 +162,4 @@ rules:
     label:
       remove: ci-ok
     comment: |-
-      The CI failed. Please take a look at the [{{status.target_url}}](CI results).
+      The CI failed. Please take a look at the [CI results]({{status.target_url}}).
