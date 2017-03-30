@@ -152,7 +152,11 @@ rules:
       state: "success"
   actions:
     label: ci-ok
-    comment: The important CI build succeeded. Great work so far.
+    comment:
+      identifier: ci-result
+      readd: true
+      message: |-
+        The important CI build succeeded. Great work so far @{{issue.user.login}}.
 - filters:
     open: true
     status:
@@ -161,5 +165,8 @@ rules:
   actions:
     label:
       remove: ci-ok
-    comment: |-
-      The CI failed. Please take a look at the [CI results]({{status.target_url}}).
+    comment: 
+      identifier: ci-result
+      readd: true
+      message: |-
+        The CI failed. Please take a look at the [CI results]({{status.target_url}}) @{{issue.user.login}}.
