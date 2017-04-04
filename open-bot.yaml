@@ -170,3 +170,12 @@ rules:
       readd: true
       message: |-
         The CI failed. Please take a look at the [CI results]({{status.target_url}}) @{{issue.user.login}}.
+- filters:
+    comment: "respond"
+    age:
+      value: "{{comment.created_at}}"
+      minimum: "5m"
+  actions:
+    comment:
+      identifier: "respond"
+      message: "5m after @{{comment.user.login}}'s comment" 
