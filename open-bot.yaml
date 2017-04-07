@@ -219,7 +219,7 @@ rules:
       value: "{{{fetch}}}"
       remove:
         - "^[\\s\\S]+?nvm --version\n.*\n"
-        - "\n*The command \".+\" exited with \d+.\n[\\s\\S]*"
+        - "\n*The command \".+\" exited with \\d+.\n[\\s\\S]*"
   actions:
     comment:
       identifier: travis-result
