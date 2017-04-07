@@ -178,4 +178,57 @@ rules:
   actions:
     comment:
       identifier: "respond"
-      message: "5m after @{{comment.user.login}}'s comment" 
+      message: "5m after @{{comment.user.login}}'s comment"
+- filters:
+    open: true
+    comment: "\\s*@webpack-bot\\s+move\\s+(?:to\\s+)?([a-z0-9_\\-]+/[a-z0-9_\\-]+)\\s*([\\s\\S]*)$"
+    not:
+      comment_1:
+        message: "moved\\-by\\-bot"
+        author: "."
+    permission:
+      user: "{{comment.actor.login}}"
+  actions:
+    new_issue:
+      target: "{{comment_match.[1]}}"
+      body: |-
+        {{issue.body}}
+
+        ---
+
+        This issue was moved from {{owner}}/{{repo}}#{{issue.number}} by @{{comment.actor.login}}. Orginal issue was by @{{issue.user.login}}.
+
+        {{comment_match.[2]}}
+    comment:
+      identifier: moved-by-bot
+      message: |-
+        I've moved it to {{comment_match.[1]}}.
+    close: true
+- filters:
+    commit: true
+    status:
+      context: "continuous-integration/travis-ci/pr"
+    ensure:
+      value: "{{status.state}}"
+      equals: "failure"
+    travis_job:
+      state: "failed"
+    fetch: travis_job.log
+    string_cleanup:
+      id: logResult
+      value: "{{{fetch}}}"
+      remove:
+        - "^[\\s\\S]+?nvm --version\n.*\n"
+        - "\n*The command ".+" exited with \d+.\n[\\s\\S]*"
+  actions:
+    comment:
+      identifier: travis-result
+      message: |-
+        @{{commit.author.login}} Please review the following output log for errors:
+
+        ``` text
+        {{logResult}}
+        ```
+        
+        See [complete report here]({{status.target_url}}).
+
