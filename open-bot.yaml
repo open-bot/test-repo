@@ -227,7 +227,7 @@ rules:
         @{{commit.author.login}} Please review the following output log for errors:
 
         ``` text
-        {{logResult}}
+        {{{logResult}}}
         ```
         
         See [complete report here]({{status.target_url}}).
