@@ -1,234 +1,31 @@
 bot: webpack-bot
 rules:
+
 - filters:
-    open: true
-    comment: (hi|hello)
-  actions:
-    comment: Hi
-- filters:
-    comment: "@sokra"
-  actions:
-    label: "mentioned-sokra"
-- filters:
-    comment:
-      author: "^sokra$"
-  actions:
-    label:
-      remove: "mentioned-sokra"
-- filters:
-    open: true
-    comment: "@webpack-bot close it"
-  actions:
-    close: true
-- filters:
-    open: false
-    comment: "@webpack-bot reopen it"
-  actions:
-    reopen: true
-- filters:
-    issue: true
-    open: true
-    threshold:
-      maximum: 3
-      filters:
-        issue_1: feature.*bug
-        issue_2: current behavior
-        issue_3: reproduce
-        issue_4: expected behavior
-        issue_5: motivation
-        issue_6: version
-  actions:
-    label: issue-template-missing
-    comment: |-
-      It looks like you just deleted our lovely crafted [issue template](https://raw.githubusercontent.com/webpack/webpack/master/.github/ISSUE_TEMPLATE.md). It was there for good reasons. Please help us solving your issue by answering the questions asked in this template. I'm closing this. Please edit the issue with filled issue template. Also make sure your issue is not a question. Questions should be posted on Stack Overflow.
-      
-      I'll reopen the issue automatically when issue template is followed.
-    close: true
-- filters:
-    issue: true
-    open: false
-    label: issue-template-missing
-    threshold:
-      minimum: 4
-      filters:
-        issue_1: feature.*bug
-        issue_2: current behavior
-        issue_3: reproduce
-        issue_4: expected behavior
-        issue_5: motivation
-        issue_6: version
-  actions:
-    comment: |-
-      Thanks for your help. The issue template is now followed and I reopen the issue.
-    label:
-      remove: issue-template-missing
-    reopen: true
-- filters:
-    threshold:
-      maximum: 0
-      filters:
-        label_1: "Category: A"
-        label_2: "Category: B"
-        label_3: "Category: C"
-  actions:
-    label: 
-      add: "Category: (missing)"
-      remove: "Category: (conflict)"
-- filters:
-    threshold:
-      minimum: 2
-      filters:
-        label_1: "Category: A"
-        label_2: "Category: B"
-        label_3: "Category: C"
-  actions:
-    label:
-      add: "Category: (conflict)"
-      remove: "Category: (missing)"
-- filters:
-    threshold:
-      minimum: 1
-      maximum: 1
-      filters:
-        label_1: "Category: A"
-        label_2: "Category: B"
-        label_3: "Category: C"
-  actions:
-    label:
-      remove:
-      - "Category: (missing)"
-      - "Category: (conflict)"
-- filters:
-    open: true
-    in_order:
-      commit: true
-      review:
-        state: "approved"
-  actions:
-    label:
-      add: reviewed-approved
-      remove:
-      - review-outdated
-      - unreviewed
-- filters:
-    open: true
-    in_order:
-      commit: true
-      review:
-        state: "changes"
-  actions:
-    label:
-      add: reviewed-changes-requested
-      remove:
-      - review-outdated
-      - unreviewed
-- filters:
-    open: true
-    in_order:
-      review: true
-      commit: true
-  actions:
-    label:
-      add: review-outdated
-      remove:
-      - reviewed-changes-requested
-      - reviewed-approved
-      - unreviewed
-    comment: |-
-      Thanks for your changes. We'll review it again.
-      
-      cc @{{review.user.login}}
-- filters:
-    open: true
-    commit: true
     not:
-      review: true
+      label: inactive
+    last_action_age: 30m
   actions:
-    label: unreviewed
+    comment: Inactive! This issue will close in 10 minutes.
+    label: inactive
 - filters:
-    open: true
-    status:
-      context: "continuous-integration/travis-ci/pr"
-      state: "success"
-  actions:
-    label: ci-ok
-    comment:
-      identifier: ci-result
-      readd: true
-      message: |-
-        The important CI build succeeded. Great work so far @{{issue.user.login}}.
-- filters:
-    open: true
-    status:
-      context: "continuous-integration/travis-ci/pr"
-      state: "failure"
+    label: inactive
+    last_action_age:
+      maximum: 25m
   actions:
     label:
-      remove: ci-ok
-    comment: 
-      identifier: ci-result
-      readd: true
-      message: |-
-        The CI failed. Please take a look at the [CI results]({{status.target_url}}) @{{issue.user.login}}.
+      remove:
+        - inactive
+
 - filters:
-    comment: "respond"
-    age:
-      value: "{{comment.created_at}}"
-      minimum: "5m"
+    last_action_age:
+      minimum: 10m
+      includeBotActions: true
+    label: inactive
   actions:
-    comment:
-      identifier: "respond"
-      message: "5m after @{{comment.user.login}}'s comment"
+    close: true
+
 - filters:
     open: true
-    comment: "\\s*@webpack-bot\\s+move\\s+(?:to\\s+)?([a-z0-9_\\-]+/[a-z0-9_\\-]+)\\s*([\\s\\S]*)$"
-    not:
-      comment_1:
-        message: "moved\\-by\\-bot"
-        author: "."
-    permission:
-      user: "{{comment.actor.login}}"
   actions:
-    new_issue:
-      target: "{{comment_match.[1]}}"
-      body: |-
-        {{issue.body}}
-
-        ---
-
-        This issue was moved from {{owner}}/{{repo}}#{{issue.number}} by @{{comment.actor.login}}. Orginal issue was by @{{issue.user.login}}.
-
-        {{comment_match.[2]}}
-    comment:
-      identifier: moved-by-bot
-      message: |-
-        I've moved it to {{comment_match.[1]}}.
-    close: true
-- filters:
-    commit: true
-    status:
-      context: "continuous-integration/travis-ci/pr"
-    ensure:
-      value: "{{status.state}}"
-      equals: "failure"
-    travis_job:
-      state: "failed"
-    fetch: travis_job.log
-    string_cleanup:
-      id: logResult
-      value: "{{{fetch}}}"
-      remove:
-        - "^[\\s\\S]+?nvm --version\n.*\n"
-        - "\n*The command \".+\" exited with \\d+.\n[\\s\\S]*"
-  actions:
-    comment:
-      identifier: travis-result
-      message: |-
-        @{{commit.author.login}} Please review the following output log for errors:
-
-        ``` text
-        {{{logResult}}}
-        ```
-        
-        See [complete report here]({{status.target_url}}).
-
+    schedule: 10m
