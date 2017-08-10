@@ -1,4 +1,4 @@
 sudo: false
 language: node_js
 
-script: sleep 30s
+script: sleep asss
