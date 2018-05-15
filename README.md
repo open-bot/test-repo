@@ -1,3 +1,3 @@
 # test-repo
 
-For testing
+For testing open-bot
